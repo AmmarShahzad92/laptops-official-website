@@ -137,7 +137,7 @@ export function Hero() {
               
               {/* Image Container */}
               <div className="relative z-10 rounded-2xl bg-gradient-to-br from-navy/5 to-electric-blue/5 p-4">
-                <div className="relative aspect-[4/3] w-full max-w-lg overflow-hidden rounded-xl">
+                <div className="relative h-[300px] w-full max-w-lg overflow-hidden rounded-xl sm:h-[350px] lg:h-[400px]">
                   <Image
                     src="/images/hero-laptop.jpg"
                     alt="Premium laptops at Laptops Official"

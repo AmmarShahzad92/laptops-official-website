@@ -706,23 +706,14 @@ export default function POSPage() {
                 </div>
               ) : (
                 <div>
-                  <AnimatePresence>
-                    {cart.map((item) => (
-                      <motion.div
-                        key={item.product_id}
-                        initial={{ opacity: 0, x: 16 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -16 }}
-                        transition={{ duration: 0.22, ease: "easeOut" }}
-                      >
-                        <CartRow
-                          item={item}
-                          onQtyChange={updateQty}
-                          onRemove={removeFromCart}
-                        />
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
+                  {cart.map((item) => (
+                    <CartRow
+                      key={item.product_id}
+                      item={item}
+                      onQtyChange={updateQty}
+                      onRemove={removeFromCart}
+                    />
+                  ))}
                 </div>
               )}
             </div>

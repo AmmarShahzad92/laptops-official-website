@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import { motion } from "framer-motion"
 import {
   TrendingUp, Package, ShoppingCart, RotateCcw,
   Users, Download, ChevronLeft, ChevronRight,
@@ -280,7 +281,12 @@ function KpiCard({ label, value, sub, color, icon: Icon }: {
   label: string; value: string; sub: string; color: string; icon: React.ElementType
 }) {
   return (
-    <div className="bg-[#0F1E35] border border-[#1E293B] rounded-xl p-5 flex items-start gap-4">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+      className="bg-[#0F1E35] border border-[#1E293B] rounded-xl p-5 flex items-start gap-4"
+    >
       <div className={cn("w-11 h-11 rounded-lg flex items-center justify-center flex-shrink-0", color)}>
         <Icon className="w-5 h-5" />
       </div>
@@ -289,7 +295,7 @@ function KpiCard({ label, value, sub, color, icon: Icon }: {
         <p className="text-white text-xl font-bold leading-none">{value}</p>
         <p className="text-[#64748B] text-xs mt-1.5">{sub}</p>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -914,10 +920,18 @@ export default function ReportsPage() {
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 py-3 overflow-y-auto space-y-0.5">
+        <motion.nav
+          initial="hidden"
+          animate="visible"
+          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.07 } } }}
+          className="flex-1 py-3 overflow-y-auto space-y-0.5"
+        >
           {REPORT_NAV.map(({ id, label, icon: Icon, desc }) => (
-            <button
+            <motion.div
               key={id}
+              variants={{ hidden: { opacity: 0, x: -14 }, visible: { opacity: 1, x: 0, transition: { duration: 0.35, ease: "easeOut" } } }}
+            >
+            <button
               onClick={() => { setActiveReport(id); resetPage() }}
               title={!sidebarOpen ? label : undefined}
               className={cn(
@@ -940,8 +954,9 @@ export default function ReportsPage() {
                 <ChevronRight className="w-3 h-3 ml-auto flex-shrink-0" />
               )}
             </button>
+            </motion.div>
           ))}
-        </nav>
+        </motion.nav>
 
         {/* Admin link */}
         {sidebarOpen && (
@@ -1042,7 +1057,14 @@ export default function ReportsPage() {
 
         {/* Report content */}
         <main className="flex-1 overflow-y-auto p-6">
-          {renderReport()}
+          <motion.div
+            key={activeReport}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {renderReport()}
+          </motion.div>
         </main>
       </div>
     </div>

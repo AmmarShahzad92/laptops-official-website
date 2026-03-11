@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo, useEffect, useRef, useCallback } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import {
   Search, X, Plus, Minus, Trash2, Receipt,
   CreditCard, Banknote, Building2, ShoppingCart,
@@ -626,11 +627,22 @@ export default function POSPage() {
                 <p className="text-[#334155] text-xs">Try a different search term</p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 xl:grid-cols-3 gap-2">
+              <motion.div
+                key={activeCategory}
+                variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.04 } } }}
+                initial="hidden"
+                animate="visible"
+                className="grid grid-cols-2 xl:grid-cols-3 gap-2"
+              >
                 {filteredProducts.map((product) => (
-                  <ProductCard key={product.product_id} product={product} onAdd={addToCart} />
+                  <motion.div
+                    key={product.product_id}
+                    variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.28, ease: "easeOut" } } }}
+                  >
+                    <ProductCard product={product} onAdd={addToCart} />
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
             )}
           </div>
         </div>
@@ -694,14 +706,23 @@ export default function POSPage() {
                 </div>
               ) : (
                 <div>
-                  {cart.map((item) => (
-                    <CartRow
-                      key={item.product_id}
-                      item={item}
-                      onQtyChange={updateQty}
-                      onRemove={removeFromCart}
-                    />
-                  ))}
+                  <AnimatePresence>
+                    {cart.map((item) => (
+                      <motion.div
+                        key={item.product_id}
+                        initial={{ opacity: 0, x: 16 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -16 }}
+                        transition={{ duration: 0.22, ease: "easeOut" }}
+                      >
+                        <CartRow
+                          item={item}
+                          onQtyChange={updateQty}
+                          onRemove={removeFromCart}
+                        />
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
                 </div>
               )}
             </div>

@@ -742,6 +742,6 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }

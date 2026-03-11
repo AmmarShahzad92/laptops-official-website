@@ -222,6 +222,6 @@ export function Navbar({ cartCount = 0 }: NavbarProps) {
           </Sheet>
         </div>
       </nav>
-    </header>
+    </motion.header>
   );
 }

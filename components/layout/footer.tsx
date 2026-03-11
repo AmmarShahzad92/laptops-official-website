@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { Laptop, Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin } from "lucide-react";
 
 const footerLinks = {
@@ -44,9 +47,18 @@ export function Footer() {
   return (
     <footer className="bg-navy text-white">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-5">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.1 } } }}
+          className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-5"
+        >
           {/* Brand Section */}
-          <div className="lg:col-span-2">
+          <motion.div
+            variants={{ hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } } }}
+            className="lg:col-span-2"
+          >
             <Link href="/" className="flex items-center gap-2">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-electric-blue">
                 <Laptop className="h-6 w-6 text-white" />
@@ -76,11 +88,14 @@ export function Footer() {
                 <span>info@laptopsofficial.pk</span>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Footer Links */}
           {Object.values(footerLinks).map((section) => (
-            <div key={section.title}>
+            <motion.div
+              key={section.title}
+              variants={{ hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } } }}
+            >
               <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
                 {section.title}
               </h3>
@@ -96,9 +111,9 @@ export function Footer() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Bottom Section */}
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-700 pt-8 md:flex-row">

@@ -11,6 +11,7 @@ import {
   Menu,
   Laptop,
 } from "lucide-react";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -47,7 +48,10 @@ export function Navbar({ cartCount = 0 }: NavbarProps) {
   }, []);
 
   return (
-    <header
+    <motion.header
+      initial={{ y: -64, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
         "sticky top-0 z-50 w-full transition-all duration-300",
         isScrolled

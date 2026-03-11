@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { motion } from "framer-motion"
 import {
   TrendingUp, Package, ShoppingCart, RotateCcw,
@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/table"
 import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
+import { Skeleton } from "@/components/ui/skeleton"
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -813,6 +814,62 @@ function StaffReport({ rows, page, setPage }: { rows: StaffRow[]; page: number; 
   )
 }
 
+// ─── Report Loading Skeleton ────────────────────────────────────────────────────
+
+function ReportSkeleton() {
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="bg-[#0F1E35] border border-[#1E293B] rounded-xl p-5 flex items-start gap-4">
+            <Skeleton className="w-11 h-11 rounded-lg bg-[#1E293B]" />
+            <div className="min-w-0 flex-1 space-y-2">
+              <Skeleton className="h-3 w-20 bg-[#1E293B]" />
+              <Skeleton className="h-6 w-24 bg-[#1E293B]" />
+              <Skeleton className="h-3 w-28 bg-[#1E293B]" />
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="bg-[#0F1E35] border border-[#1E293B] rounded-xl p-5 space-y-4">
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-40 bg-[#1E293B]" />
+          <Skeleton className="h-3 w-24 bg-[#1E293B]" />
+        </div>
+        <Skeleton className="h-[240px] w-full rounded-lg bg-[#1E293B]" />
+      </div>
+      <div className="bg-[#0F1E35] border border-[#1E293B] rounded-xl">
+        <div className="p-5 border-b border-[#1E293B] space-y-1">
+          <Skeleton className="h-4 w-44 bg-[#1E293B]" />
+          <Skeleton className="h-3 w-24 bg-[#1E293B]" />
+        </div>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-[#1E293B] hover:bg-transparent">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <TableHead key={i}><Skeleton className="h-3 w-16 bg-[#1E293B]" /></TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {Array.from({ length: 8 }).map((_, row) => (
+                <TableRow key={row} className="border-[#1E293B]">
+                  {Array.from({ length: 8 }).map((_, col) => (
+                    <TableCell key={col}>
+                      <Skeleton className={`h-3.5 rounded bg-[#1E293B] ${col === 0 ? "w-10" : col === 2 ? "w-32" : "w-20"}`} />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ─── Main Reports Page ─────────────────────────────────────────────────────────
 
 export default function ReportsPage() {
@@ -822,6 +879,13 @@ export default function ReportsPage() {
   const [location,     setLocation]     = useState("All Locations")
   const [page,         setPage]         = useState(1)
   const [sidebarOpen,  setSidebarOpen]  = useState(true)
+  const [isLoading,    setIsLoading]    = useState(true)
+
+  useEffect(() => {
+    setIsLoading(true)
+    const t = setTimeout(() => setIsLoading(false), 650)
+    return () => clearTimeout(t)
+  }, [activeReport])
 
   const resetPage = () => setPage(1)
 
@@ -1063,7 +1127,7 @@ export default function ReportsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
           >
-            {renderReport()}
+            {isLoading ? <ReportSkeleton /> : renderReport()}
           </motion.div>
         </main>
       </div>

@@ -17,6 +17,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
+import { Skeleton } from "@/components/ui/skeleton"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -397,6 +398,29 @@ function ShortcutBar() {
   )
 }
 
+// ─── Product Grid Skeleton ──────────────────────────────────────────────────────
+
+function ProductGridSkeleton() {
+  return (
+    <div className="grid grid-cols-2 xl:grid-cols-3 gap-2">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div key={i} className="bg-[#0F1E35] border border-[#1E293B] rounded-xl p-3 space-y-2">
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-3 w-16 rounded bg-[#1E293B]" />
+            <Skeleton className="h-4 w-14 rounded-full bg-[#1E293B]" />
+          </div>
+          <Skeleton className="h-3.5 w-32 rounded bg-[#1E293B]" />
+          <Skeleton className="h-3 w-28 rounded bg-[#1E293B]" />
+          <div className="flex items-center justify-between pt-1">
+            <Skeleton className="h-5 w-24 rounded bg-[#1E293B]" />
+            <Skeleton className="h-6 w-6 rounded-full bg-[#1E293B]" />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 // ─── Main POS Page ────────────────────────────────────────────────────────────
 
 export default function POSPage() {
@@ -409,6 +433,7 @@ export default function POSPage() {
   const [receiptData, setReceiptData] = useState<ReceiptData | null>(null)
   const [receiptOpen, setReceiptOpen] = useState(false)
   const [successMsg, setSuccessMsg] = useState("")
+  const [isLoading, setIsLoading] = useState(true)
   const searchRef = useRef<HTMLInputElement>(null)
 
   // ── Filtered products ──
@@ -507,6 +532,12 @@ export default function POSPage() {
     clearTransaction()
     setReceiptOpen(true)
   }
+
+  // ── Initial product load ──
+  useEffect(() => {
+    const t = setTimeout(() => setIsLoading(false), 600)
+    return () => clearTimeout(t)
+  }, [])
 
   // ── Keyboard shortcuts ──
   useEffect(() => {
@@ -620,7 +651,9 @@ export default function POSPage() {
 
           {/* Products grid */}
           <div className="flex-1 overflow-y-auto p-3">
-            {filteredProducts.length === 0 ? (
+            {isLoading ? (
+              <ProductGridSkeleton />
+            ) : filteredProducts.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-40 text-center">
                 <Search className="w-8 h-8 text-[#1E293B] mb-2" />
                 <p className="text-[#64748B] text-sm">No products found</p>

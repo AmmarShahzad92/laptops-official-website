@@ -1,6 +1,6 @@
 ﻿"use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { motion } from "framer-motion"
 
 const kpiGridVariants = {
@@ -40,6 +40,7 @@ import {
 } from "@/components/ui/table"
 import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
+import { Skeleton } from "@/components/ui/skeleton"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -175,6 +176,42 @@ function KpiCard({ label, value, icon: Icon, trend, color }: {
     </motion.div>
   )
 }
+
+// ─── Loading Skeletons ────────────────────────────────────────────────────────
+
+function KpiGridSkeleton() {
+  return (
+    <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div key={i} className="bg-[#0F1E35] border border-[#1E293B] rounded-xl p-5 flex items-start gap-4">
+          <Skeleton className="w-11 h-11 rounded-lg bg-[#1E293B]" />
+          <div className="min-w-0 flex-1 space-y-2">
+            <Skeleton className="h-3 w-20 bg-[#1E293B]" />
+            <Skeleton className="h-6 w-24 bg-[#1E293B]" />
+            <Skeleton className="h-3 w-28 bg-[#1E293B]" />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function TableRowsSkeleton({ cols, rows = 5 }: { cols: number; rows?: number }) {
+  const widths = ["w-10", "w-24", "w-20", "w-16", "w-20", "w-14", "w-16", "w-20"]
+  return (
+    <>
+      {Array.from({ length: rows }).map((_, row) => (
+        <TableRow key={row} className="border-[#1E293B]">
+          {Array.from({ length: cols }).map((_, col) => (
+            <TableCell key={col}>
+              <Skeleton className={`h-3.5 rounded bg-[#1E293B] ${widths[col % widths.length]}`} />
+            </TableCell>
+          ))}
+        </TableRow>
+      ))}
+    </>
+  )
+}
 // ─── Sidebar ──────────────────────────────────────────────────────────────
 
 const NAV_ITEMS: { id: AdminTab; label: string; icon: React.ElementType }[] = [
@@ -292,6 +329,59 @@ function TopBar({ tab }: { tab: AdminTab }) {
 // ─── Dashboard Tab ────────────────────────────────────────────────────────────
 
 function DashboardTab() {
+  const [isLoading, setIsLoading] = useState(true)
+  useEffect(() => {
+    const t = setTimeout(() => setIsLoading(false), 700)
+    return () => clearTimeout(t)
+  }, [])
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <KpiGridSkeleton />
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+          <div className="xl:col-span-2 bg-[#0F1E35] border border-[#1E293B] rounded-xl p-5 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-32 bg-[#1E293B]" />
+                <Skeleton className="h-3 w-20 bg-[#1E293B]" />
+              </div>
+              <Skeleton className="h-5 w-12 rounded-full bg-[#1E293B]" />
+            </div>
+            <Skeleton className="h-[200px] w-full rounded-lg bg-[#1E293B]" />
+          </div>
+          <div className="bg-[#0F1E35] border border-[#1E293B] rounded-xl p-5 space-y-4">
+            <Skeleton className="h-4 w-36 bg-[#1E293B]" />
+            <div className="space-y-3">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} className="h-14 w-full rounded-lg bg-[#1E293B]" />
+              ))}
+            </div>
+            <Skeleton className="h-9 w-full rounded-lg bg-[#1E293B]" />
+          </div>
+        </div>
+        <div className="bg-[#0F1E35] border border-[#1E293B] rounded-xl">
+          <div className="flex items-center justify-between p-5 border-b border-[#1E293B]">
+            <Skeleton className="h-4 w-28 bg-[#1E293B]" />
+            <Skeleton className="h-7 w-16 rounded-lg bg-[#1E293B]" />
+          </div>
+          <Table>
+            <TableHeader>
+              <TableRow className="border-[#1E293B] hover:bg-transparent">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <TableHead key={i}><Skeleton className="h-3 w-16 bg-[#1E293B]" /></TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRowsSkeleton cols={6} rows={5} />
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       {/* KPIs */}
@@ -641,6 +731,12 @@ function StaffTab() {
   const [deletingId, setDeletingId] = useState<number | null>(null)
   const [sortKey, setSortKey] = useState<SortKey>("staff_id")
   const [sortDir, setSortDir] = useState<SortDir>("asc")
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const t = setTimeout(() => setIsLoading(false), 700)
+    return () => clearTimeout(t)
+  }, [])
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase()
@@ -715,9 +811,34 @@ function StaffTab() {
 
   const deletingName = staff.find((s) => s.staff_id === deletingId)?.staff_name ?? ""
 
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <Skeleton className="h-9 w-72 rounded-lg bg-[#1E293B]" />
+          <Skeleton className="h-9 w-36 rounded-lg bg-[#1E293B]" />
+        </div>
+        <div className="bg-[#0F1E35] border border-[#1E293B] rounded-xl overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-[#1E293B] hover:bg-transparent">
+                {Array.from({ length: 7 }).map((_, i) => (
+                  <TableHead key={i}><Skeleton className="h-3 w-14 bg-[#1E293B]" /></TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRowsSkeleton cols={7} rows={8} />
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-4">
-      {/* Toolbar */}
+      {/* Toolbar */
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div className="relative w-full sm:w-72">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#64748B]" />

@@ -1,6 +1,16 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import { motion } from "framer-motion"
+
+const kpiGridVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.09 } },
+}
+const kpiItemVariants = {
+  hidden: { opacity: 0, y: 22, scale: 0.97 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] } },
+}
 import {
   LayoutDashboard, Users, Package, UserCircle, Truck,
   MapPin, ShieldCheck, Settings, LogOut, ChevronRight,
@@ -150,7 +160,10 @@ function KpiCard({ label, value, icon: Icon, trend, color }: {
   label: string; value: string; icon: React.ElementType; trend: string; color: string
 }) {
   return (
-    <div className="bg-[#0F1E35] border border-[#1E293B] rounded-xl p-5 flex items-start gap-4">
+    <motion.div
+      variants={kpiItemVariants}
+      className="bg-[#0F1E35] border border-[#1E293B] rounded-xl p-5 flex items-start gap-4"
+    >
       <div className={cn("w-11 h-11 rounded-lg flex items-center justify-center flex-shrink-0", color)}>
         <Icon className="w-5 h-5" />
       </div>
@@ -159,11 +172,9 @@ function KpiCard({ label, value, icon: Icon, trend, color }: {
         <p className="text-white text-xl font-bold leading-none">{value}</p>
         <p className="text-emerald-400 text-xs mt-1.5">{trend}</p>
       </div>
-    </div>
+    </motion.div>
   )
-}
-
-// ─── Sidebar ──────────────────────────────────────────────────────────────────
+} ──────────────────────────────────────────────────────────────────
 
 const NAV_ITEMS: { id: AdminTab; label: string; icon: React.ElementType }[] = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -283,12 +294,17 @@ function DashboardTab() {
   return (
     <div className="space-y-6">
       {/* KPIs */}
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+      <motion.div
+        variants={kpiGridVariants}
+        initial="hidden"
+        animate="visible"
+        className="grid grid-cols-2 xl:grid-cols-4 gap-4"
+      >
         <KpiCard label="Total Revenue" value="PKR 59.6L" icon={TrendingUp} trend="↑ 18% this month" color="bg-[#2563EB]/15 text-[#2563EB]" />
         <KpiCard label="Total Orders" value="171" icon={ShoppingCart} trend="↑ 12% this month" color="bg-purple-500/15 text-purple-400" />
         <KpiCard label="Active Products" value="10" icon={BoxIcon} trend="2 low stock alerts" color="bg-amber-500/15 text-amber-400" />
         <KpiCard label="Total Staff" value="8" icon={UserCheck} trend="1 suspended" color="bg-emerald-500/15 text-emerald-400" />
-      </div>
+      </motion.div>
 
       {/* Revenue chart + Low stock */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
@@ -864,7 +880,14 @@ export default function AdminPage() {
         <TopBar tab={activeTab} />
 
         <main className="flex-1 overflow-y-auto p-6">
-          {renderContent()}
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {renderContent()}
+          </motion.div>
         </main>
       </div>
     </div>

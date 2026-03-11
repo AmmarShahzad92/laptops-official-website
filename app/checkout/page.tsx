@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { motion, AnimatePresence } from "framer-motion"
 import { CheckCircle2, ChevronRight, ChevronLeft, MapPin, CreditCard, ClipboardList, Truck, Store } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -654,7 +655,12 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0A1628] py-10 px-4">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="min-h-screen bg-[#0A1628] py-10 px-4"
+    >
       <div className="max-w-5xl mx-auto">
 
         {/* Header */}
@@ -671,21 +677,31 @@ export default function CheckoutPage() {
           {/* Form area (2/3 width) */}
           <div className="lg:col-span-2 bg-[#0F1E35] border border-[#1E293B] rounded-2xl p-6 md:p-8">
 
-            {currentStep === 1 && (
-              <StepDelivery data={delivery} onChange={setDelivery} />
-            )}
-            {currentStep === 2 && (
-              <StepPayment data={payment} onChange={setPayment} />
-            )}
-            {currentStep === 3 && (
-              <StepReview
-                delivery={delivery}
-                payment={payment}
-                cart={cart}
-                onPlaceOrder={handlePlaceOrder}
-                loading={loading}
-              />
-            )}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentStep}
+                initial={{ opacity: 0, x: 24 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              >
+                {currentStep === 1 && (
+                  <StepDelivery data={delivery} onChange={setDelivery} />
+                )}
+                {currentStep === 2 && (
+                  <StepPayment data={payment} onChange={setPayment} />
+                )}
+                {currentStep === 3 && (
+                  <StepReview
+                    delivery={delivery}
+                    payment={payment}
+                    cart={cart}
+                    onPlaceOrder={handlePlaceOrder}
+                    loading={loading}
+                  />
+                )}
+              </motion.div>
+            </AnimatePresence>
 
             {/* Navigation buttons (not shown on step 3 since Place Order is inline) */}
             {currentStep < 3 && (

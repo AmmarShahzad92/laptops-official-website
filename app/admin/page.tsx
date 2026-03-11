@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useState, useMemo } from "react"
 import { motion } from "framer-motion"
@@ -174,7 +174,8 @@ function KpiCard({ label, value, icon: Icon, trend, color }: {
       </div>
     </motion.div>
   )
-} ──────────────────────────────────────────────────────────────────
+}
+// ─── Sidebar ──────────────────────────────────────────────────────────────
 
 const NAV_ITEMS: { id: AdminTab; label: string; icon: React.ElementType }[] = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
